@@ -19,7 +19,7 @@ class Playground {
 
 public:
     Playground(size_t width, size_t height)
-            : data(std::vector<char>(width * height)), width(width), height(height) { }
+            : data(std::vector<char>(width * height, ' ')), width(width), height(height) { }
 
     bool collision(const pos& position, const Tetroid& tetroid);
 

@@ -8,24 +8,7 @@
 #include <cstddef>
 #include <array>
 
-
-struct pos {
-    int x;
-    int y;
-
-    pos(int x, int y) : x(x), y(y) { }
-
-    pos& operator=(const pos& a) = default;
-
-    pos operator+(const pos& a) const {
-        return pos { a.x + x, a.y + y };
-    }
-
-    bool operator==(const pos& a) const {
-        return (x == a.x && y == a.y);
-    }
-};
-
+struct pos;
 
 class Tetroid {
     std::array<char,17> data;
@@ -33,12 +16,16 @@ class Tetroid {
 
     template<int W, int H>
     size_t mkindex(size_t x, size_t y) const;
+    void print_impl(size_t y, size_t x, bool clear) const;
 
 public:
     explicit Tetroid(const char symbol[17]);
 
     void rotate() { rotation = (rotation + 1) % 4; }
     void unrotate() { rotation = (rotation - 1) % 4; }
+
+    void print(pos position) const;
+    void clear(pos position) const;
 
     char operator()(size_t x, size_t y) const;
 

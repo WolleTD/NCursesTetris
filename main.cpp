@@ -6,7 +6,7 @@
 #include <sstream>
 #include "Playground.h"
 #include "Tetroid.h"
-#include "curses_utils.h"
+#include "NCurses.h"
 
 static const std::array<std::string,7> tetroid_strings = {
         {{" A   AA   A     "},
@@ -49,7 +49,7 @@ int main()
 
     while(!gameOver) {
         // Update display
-        printTetroid(pg_pos + currentPos, tetroid);
+        tetroid.print(pg_pos + currentPos);
         refresh();
 
         // User input
@@ -59,7 +59,7 @@ int main()
         std::stringstream ss;
         ss << cmd;
         mvaddstr(20, 25, ss.str().c_str());
-        clearTetroid(pg_pos + currentPos, tetroid);
+        tetroid.clear(pg_pos + currentPos);
 
         // Handle user input
         pos newPos = currentPos;
@@ -93,7 +93,7 @@ int main()
             currentPos = { pg_width / 2 - 2, 0 };
             if (it > 6) {
                 mvaddstr(LINES / 2, COLS / 2 - 5, "GAME OVER!");
-                drawBox({COLS / 2 - 7, LINES / 2 - 1},
+                NCurses::drawBox({COLS / 2 - 7, LINES / 2 - 1},
                         {COLS / 2 + 6, LINES / 2 + 1},
                         '#');
                 gameOver = true;

@@ -2,17 +2,19 @@
 // Created by wolle on 25.08.19.
 //
 
+#include "NCurses.h"
 #include "Playground.h"
 #include "Tetroid.h"
 
 
 bool Playground::collision(const pos& position, const Tetroid& tetroid) {
-    // Bounds check
-    if ((position.x < 0) || (position.x > this->width - 4) || (position.y > this->height - 4)) {
-        for (size_t i = 0; i < 4; i++) {
-            for (size_t j = 0; j < 4; j++) {
-                if ((tetroid(i, j) != ' ') &&
-                    ((position.x + i < 0) || (position.x + i > this->width) || (position.y + j > this->height))) {
+    for (size_t x = 0; x < 4; x++) {
+        for (size_t y = 0; y < 4; y++) {
+            if ((tetroid(x, y) != ' ')) {
+                if ((position.x + x < 0) ||
+                    (position.x + x > this->width) ||
+                    (position.y + y > this->height) ||
+                    (data[width * y + x] != ' ')) {
                     return true;
                 }
             }

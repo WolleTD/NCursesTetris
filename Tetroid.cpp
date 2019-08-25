@@ -2,7 +2,9 @@
 // Created by wolle on 25.08.19.
 //
 
+#include "NCurses.h"
 #include "Tetroid.h"
+#include <curses.h>
 #include <algorithm>
 
 template<int W, int H>
@@ -18,6 +20,23 @@ size_t Tetroid::mkindex(size_t x, size_t y) const {
 
 Tetroid::Tetroid(const char symbol[17]) : data{}, rotation(0) {
     std::copy(symbol, symbol + 16, data.begin());
+}
+
+void Tetroid::print_impl(size_t y, size_t x, bool clear) const {
+    for (size_t i = 0; i < 4; i++) {
+        for (size_t j = 0; j < 4; j++) {
+            if ((*this)(j, i) != ' ')
+                mvaddch(y + i, x + j, (clear ? ' ' : (*this)(j, i)));
+        }
+    }
+}
+
+void Tetroid::print(pos position) const {
+    print_impl(position.y, position.x, false);
+}
+
+void Tetroid::clear(pos position) const {
+    print_impl(position.y, position.x, true);
 }
 
 char Tetroid::operator()(size_t x, size_t y) const {
