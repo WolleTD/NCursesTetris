@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <array>
 
-struct pos;
+struct position;
 
 class Tetroid {
     std::array<char,17> data;
@@ -24,8 +24,8 @@ public:
     void rotate() { rotation = (rotation + 1) % 4; }
     void unrotate() { rotation = (rotation - 1) % 4; }
 
-    void print(pos position) const;
-    void clear(pos position) const;
+    void print(position pos) const;
+    void clear(position pos) const;
 
     char operator()(size_t x, size_t y) const;
 

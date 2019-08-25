@@ -8,25 +8,44 @@
 #include <cstdlib>
 #include <vector>
 
-struct pos;
+struct position;
 class Tetroid;
 
 class Playground {
+
+    friend class PlaygroundRow;
 
     std::vector<char> data;
     size_t width;
     size_t height;
 
 public:
+
+    class PlaygroundRow {
+        const Playground& parent;
+        size_t startIndex;
+
+    public:
+        PlaygroundRow(const Playground& p, size_t start) : parent(p), startIndex(start) { }
+        const char* c_str() const { return parent.data.data() + startIndex; };
+        char operator[](size_t x) const { return parent(startIndex, x); }
+    };
+
     Playground(size_t width, size_t height)
             : data(std::vector<char>(width * height, ' ')), width(width), height(height) { }
 
-    bool collision(const pos& position, const Tetroid& tetroid);
+    size_t Width() const { return width; }
+    size_t Height() const { return height; }
 
-    size_t Width() { return width; }
-    size_t Height() { return height; }
+    void print(const position& pos) const;
 
-    char operator()(size_t y, size_t x);
+    bool collision(const position& pos, const Tetroid& tetroid) const;
+
+    bool addTetroid(const position& pos, const Tetroid& tetroid);
+
+    char operator()(size_t y, size_t x) const;
+
+    PlaygroundRow operator[](size_t y) const;
 };
 
 

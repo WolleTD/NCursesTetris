@@ -31,25 +31,26 @@ int main()
 
     const size_t pg_width = 10;
     const size_t pg_height = 20;
-    const pos pg_pos = {5, 3 };
+    const position pg_pos = {5, 3 };
 
     Playground pg(pg_width, pg_height);
 
-    for (size_t y_border = pg_pos.y; y_border <= pg_pos.y + pg_height + 1; y_border++) {
+    for (size_t y_border = pg_pos.y; y_border <= pg_pos.y + pg_height; y_border++) {
         mvaddch(y_border, pg_pos.x - 1, '#');
-        mvaddch(y_border, pg_pos.x + pg_width + 1, '#');
+        mvaddch(y_border, pg_pos.x + pg_width, '#');
     }
-    mvaddstr(pg_pos.y + pg_height + 1, pg_pos.x, std::string(pg_width + 1, '#').c_str());
+    mvaddstr(pg_pos.y + pg_height, pg_pos.x, std::string(pg_width, '#').c_str());
     refresh();
 
     bool gameOver = false;
     size_t it = 0;
     Tetroid tetroid(tetroid_strings[it].c_str());
-    pos currentPos = { pg_width / 2 - 2, 0 };
+    position currentPos = {pg_width / 2 - 2, 0 };
 
     while(!gameOver) {
         // Update display
         tetroid.print(pg_pos + currentPos);
+        pg.print(pg_pos);
         refresh();
 
         // User input
@@ -62,22 +63,32 @@ int main()
         tetroid.clear(pg_pos + currentPos);
 
         // Handle user input
-        pos newPos = currentPos;
         switch (cmd) {
             case 'A': // up
                 tetroid.rotate();
-                if (pg.collision(newPos, tetroid)) {
+                if (pg.collision(currentPos, tetroid)) {
                     tetroid.unrotate();
                 }
                 break;
             case 'B': // down
-                newPos.y++;
+                if (pg.collision(currentPos + position(0, 1), tetroid)) {
+                    pg.addTetroid(currentPos, tetroid);
+                    it = (it + 1) % 7;
+                    tetroid = Tetroid(tetroid_strings[it].c_str());
+                    currentPos = { pg_width / 2 - 2, 0 };
+                } else {
+                    currentPos.y++;
+                }
                 break;
             case 'C': // right
-                newPos.x++;
+                if (!pg.collision(currentPos + position(1, 0), tetroid)) {
+                    currentPos.x++;
+                }
                 break;
             case 'D': // left
-                newPos.x--;
+                if (!pg.collision(currentPos - position(1, 0), tetroid)) {
+                    currentPos.x--;
+                }
                 break;
             case 'q':
                 gameOver = true;
@@ -85,19 +96,12 @@ int main()
             default:
                 break;
         }
-        if (!pg.collision(newPos, tetroid)) {
-            currentPos = newPos;
-        } else {
-            it = (it + 1) % 7;
-            tetroid = Tetroid(tetroid_strings[it].c_str());
-            currentPos = { pg_width / 2 - 2, 0 };
-            if (it > 6) {
-                mvaddstr(LINES / 2, COLS / 2 - 5, "GAME OVER!");
-                NCurses::drawBox({COLS / 2 - 7, LINES / 2 - 1},
-                        {COLS / 2 + 6, LINES / 2 + 1},
-                        '#');
-                gameOver = true;
-            }
+        if (it > 6) {
+            mvaddstr(LINES / 2, COLS / 2 - 5, "GAME OVER!");
+            NCurses::drawBox({COLS / 2 - 7, LINES / 2 - 1},
+                    {COLS / 2 + 6, LINES / 2 + 1},
+                    '#');
+            gameOver = true;
         }
     }
     endwin();

@@ -5,26 +5,30 @@
 #ifndef NCURSESTETRIS_NCURSES_H
 #define NCURSESTETRIS_NCURSES_H
 
-struct pos {
+struct position {
     int x;
     int y;
 
-    pos(int x, int y) : x(x), y(y) { }
+    position(int x, int y) : x(x), y(y) { }
 
-    pos& operator=(const pos& a) = default;
+    position& operator=(const position& a) = default;
 
-    pos operator+(const pos& a) const {
-        return pos { a.x + x, a.y + y };
+    position operator+(const position& a) const {
+        return position {x + a.x, y + a.y };
     }
 
-    bool operator==(const pos& a) const {
+    position operator-(const position& a) const {
+        return position {x - a.x, y - a.y };
+    }
+
+    bool operator==(const position& a) const {
         return (x == a.x && y == a.y);
     }
 };
 
 class NCurses {
 public:
-    static void drawBox(pos pos1, pos pos2, char symbol);
+    static void drawBox(position pos1, position pos2, char symbol);
 };
 
 

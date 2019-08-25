@@ -8,7 +8,7 @@
 #include <curses.h>
 #include <string>
 
-void NCurses::drawBox(pos pos1, pos pos2, char symbol) {
+void NCurses::drawBox(position pos1, position pos2, char symbol) {
     size_t x1 = std::min(pos1.x, pos2.x);
     size_t x2 = std::max(pos1.x, pos2.x);
     size_t y1 = std::min(pos1.y, pos2.y);

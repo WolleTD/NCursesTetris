@@ -31,12 +31,12 @@ void Tetroid::print_impl(size_t y, size_t x, bool clear) const {
     }
 }
 
-void Tetroid::print(pos position) const {
-    print_impl(position.y, position.x, false);
+void Tetroid::print(position pos) const {
+    print_impl(pos.y, pos.x, false);
 }
 
-void Tetroid::clear(pos position) const {
-    print_impl(position.y, position.x, true);
+void Tetroid::clear(position pos) const {
+    print_impl(pos.y, pos.x, true);
 }
 
 char Tetroid::operator()(size_t x, size_t y) const {
