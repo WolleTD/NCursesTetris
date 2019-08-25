@@ -3,6 +3,7 @@
 //
 
 #include "Tetroid.h"
+#include <algorithm>
 
 template<int W, int H>
 size_t mkindex(size_t x, size_t y, size_t rotation) {

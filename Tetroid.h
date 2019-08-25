@@ -5,6 +5,7 @@
 #ifndef NCURSESTETRIS_TETROID_H
 #define NCURSESTETRIS_TETROID_H
 
+#include <cstddef>
 #include <array>
 
 template<int W, int H>
@@ -18,6 +19,7 @@ public:
     explicit Tetroid(const char symbol[17]);
 
     void rotate() { rotation = (rotation + 1) % 4; }
+    void unrotate() { rotation = (rotation - 1) % 4; }
 
     char at(size_t x, size_t y) const;
 

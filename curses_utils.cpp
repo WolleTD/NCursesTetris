@@ -2,9 +2,12 @@
 // Created by wolle on 25.08.19.
 //
 
+#include <cstddef>
+#include <algorithm>
+#include <string>
+#include <curses.h>
 #include "Tetroid.h"
 #include "math_utils.h"
-#include <curses.h>
 
 void printTetroid_impl(size_t y, size_t x, const Tetroid& tetroid, bool clear) {
     for (size_t i = 0; i < 4; i++) {

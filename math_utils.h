@@ -5,9 +5,8 @@
 #ifndef NCURSESTETRIS_MATH_UTILS_H
 #define NCURSESTETRIS_MATH_UTILS_H
 
-#include "Tetroid.h"
-#include <cstdlib>
-#include <vector>
+class Playground;
+class Tetroid;
 
 struct pos {
     int x;
@@ -26,15 +25,6 @@ struct pos {
     }
 };
 
-struct playground {
-    std::vector<char> data;
-    size_t width;
-    size_t height;
-
-    playground(size_t width, size_t height)
-            : data(std::vector<char>(width * height)), width(width), height(height) { }
-};
-
-bool collision(const pos& position, const Tetroid& tetroid, const playground& pg);
+bool collision(const pos& position, const Tetroid& tetroid, const Playground& pg);
 
 #endif //NCURSESTETRIS_MATH_UTILS_H
