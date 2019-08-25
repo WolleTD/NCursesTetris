@@ -7,13 +7,12 @@
 #include <string>
 #include <curses.h>
 #include "Tetroid.h"
-#include "math_utils.h"
 
 void printTetroid_impl(size_t y, size_t x, const Tetroid& tetroid, bool clear) {
     for (size_t i = 0; i < 4; i++) {
         for (size_t j = 0; j < 4; j++) {
-            if (tetroid.at(j, i) != ' ')
-                mvaddch(y + i, x + j, (clear ? ' ' : tetroid.at(j, i)));
+            if (tetroid(j, i) != ' ')
+                mvaddch(y + i, x + j, (clear ? ' ' : tetroid(j, i)));
         }
     }
 }

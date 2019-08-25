@@ -6,7 +6,6 @@
 #include <sstream>
 #include "Playground.h"
 #include "Tetroid.h"
-#include "math_utils.h"
 #include "curses_utils.h"
 
 static const std::array<std::string,7> tetroid_strings = {
@@ -67,7 +66,7 @@ int main()
         switch (cmd) {
             case 'A': // up
                 tetroid.rotate();
-                if (collision(newPos, tetroid, pg)) {
+                if (pg.collision(newPos, tetroid)) {
                     tetroid.unrotate();
                 }
                 break;
@@ -86,7 +85,7 @@ int main()
             default:
                 break;
         }
-        if (!collision(newPos, tetroid, pg)) {
+        if (!pg.collision(newPos, tetroid)) {
             currentPos = newPos;
         } else {
             it = (it + 1) % 7;

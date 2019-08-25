@@ -6,7 +6,7 @@
 #include <algorithm>
 
 template<int W, int H>
-size_t mkindex(size_t x, size_t y, size_t rotation) {
+size_t Tetroid::mkindex(size_t x, size_t y) const {
     switch (rotation % 4) {
         case 0: return y * W + x;
         case 1: return W * (H - 1) + y - (x * W);
@@ -20,9 +20,9 @@ Tetroid::Tetroid(const char symbol[17]) : data{}, rotation(0) {
     std::copy(symbol, symbol + 16, data.begin());
 }
 
-char Tetroid::at(size_t x, size_t y) const {
+char Tetroid::operator()(size_t x, size_t y) const {
 //        size_t shift_y = (rotation % 4 == 2) ? 1 : 0;
 //        size_t shift_x = (rotation % 4 == 3) ? 1 : 0;
 //        return data[mkindex<4,4>((x - shift_x) % 4, (y + shift_y) % 4, rotation)];
-    return data[mkindex<4,4>(x % 4, y % 4, rotation)];
+    return data[this->mkindex<4,4>(x % 4, y % 4)];
 }

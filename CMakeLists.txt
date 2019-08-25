@@ -8,7 +8,6 @@ add_executable(NCursesTetris
         main.cpp
         Playground.cpp
         Tetroid.cpp
-        math_utils.cpp
         curses_utils.cpp)
 
 target_link_libraries(NCursesTetris curses)
