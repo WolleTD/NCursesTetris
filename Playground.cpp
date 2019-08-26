@@ -49,17 +49,10 @@ bool Playground::addTetroid(const position &pos, const Tetroid &tetroid) {
 void Playground::print(const position &pos) const {
     for (size_t row = 0; row < height; row++) {
         for (size_t col = 0; col < width; col++) {
-            if ((*this)[row][col] != ' ') {
-                mvaddch(pos.y + row, pos.x + col, (*this)[row][col]);
+            if ((*this)(row, col) != ' ') {
+                mvaddch(pos.y + row, pos.x + col, (*this)(row, col));
             }
         }
         //mvaddnstr(pos.y + row, pos.x, (*this)[row].c_str(), width);
     }
-}
-
-Playground::PlaygroundRow Playground::operator[](size_t y) const {
-    if (y < height)
-        return { *this, y };
-    else
-        return { *this, 0 };
 }

@@ -20,17 +20,6 @@ class Playground {
     size_t height;
 
 public:
-
-    class PlaygroundRow {
-        const Playground& parent;
-        size_t startIndex;
-
-    public:
-        PlaygroundRow(const Playground& p, size_t start) : parent(p), startIndex(start) { }
-        const char* c_str() const { return parent.data.data() + startIndex; };
-        char operator[](size_t x) const { return parent(startIndex, x); }
-    };
-
     Playground(size_t width, size_t height)
             : data(std::vector<char>(width * height, ' ')), width(width), height(height) { }
 
@@ -44,8 +33,6 @@ public:
     bool addTetroid(const position& pos, const Tetroid& tetroid);
 
     char operator()(size_t y, size_t x) const;
-
-    PlaygroundRow operator[](size_t y) const;
 };
 
 
