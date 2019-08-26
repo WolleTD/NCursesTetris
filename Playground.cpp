@@ -8,20 +8,22 @@
 #include "Tetroid.h"
 
 
-bool Playground::collision(const position& pos, const Tetroid& tetroid) const {
-    for (size_t x = 0; x < 4; x++) {
-        for (size_t y = 0; y < 4; y++) {
+Collision Playground::collision(const position& pos, const Tetroid& tetroid) const {
+    for (int x = 0; x < 4; x++) {
+        for (int y = 0; y < 4; y++) {
             if ((tetroid(x, y) != ' ')) {
-                if ((pos.x + x < 0) ||
-                    (pos.x + x >= this->width) ||
-                    (pos.y + y >= this->height) ||
+                if (pos.x + x < 0) {
+                    return Collision::BorderLeft;
+                } else if (pos.x + x >= this->width) {
+                    return Collision::BorderRight;
+                } else if ((pos.y + y >= this->height) ||
                     (data[width * (pos.y + y) + pos.x + x] != ' ')) {
-                    return true;
+                    return Collision::PieceOrGround;
                 }
             }
         }
     }
-    return false;
+    return Collision::None;
 }
 
 char Playground::operator()(size_t y, size_t x) const {
@@ -32,7 +34,7 @@ char Playground::operator()(size_t y, size_t x) const {
 }
 
 bool Playground::addTetroid(const position &pos, const Tetroid &tetroid) {
-    if (collision(pos, tetroid)) {
+    if (collision(pos, tetroid) != Collision::None) {
         return false;
     } else {
         for (size_t x = 0; x < 4; x++) {

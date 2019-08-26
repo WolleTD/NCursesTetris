@@ -66,12 +66,12 @@ int main()
         switch (cmd) {
             case 'A': // up
                 tetroid.rotate();
-                if (pg.collision(currentPos, tetroid)) {
+                if (pg.collision(currentPos, tetroid) != Collision::None) {
                     tetroid.unrotate();
                 }
                 break;
             case 'B': // down
-                if (pg.collision(currentPos + position(0, 1), tetroid)) {
+                if (pg.collision(currentPos + position(0, 1), tetroid) != Collision::None) {
                     pg.addTetroid(currentPos, tetroid);
                     it = (it + 1) % 7;
                     tetroid = Tetroid(tetroid_strings[it].c_str());
@@ -81,12 +81,12 @@ int main()
                 }
                 break;
             case 'C': // right
-                if (!pg.collision(currentPos + position(1, 0), tetroid)) {
+                if (pg.collision(currentPos + position(1, 0), tetroid) == Collision::None) {
                     currentPos.x++;
                 }
                 break;
             case 'D': // left
-                if (!pg.collision(currentPos - position(1, 0), tetroid)) {
+                if (pg.collision(currentPos - position(1, 0), tetroid) == Collision::None) {
                     currentPos.x--;
                 }
                 break;

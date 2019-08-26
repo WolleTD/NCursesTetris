@@ -11,6 +11,13 @@
 struct position;
 class Tetroid;
 
+enum class Collision {
+    None,
+    BorderLeft,
+    BorderRight,
+    PieceOrGround,
+};
+
 class Playground {
 
     friend class PlaygroundRow;
@@ -28,7 +35,7 @@ public:
 
     void print(const position& pos) const;
 
-    bool collision(const position& pos, const Tetroid& tetroid) const;
+    Collision collision(const position& pos, const Tetroid& tetroid) const;
 
     bool addTetroid(const position& pos, const Tetroid& tetroid);
 
