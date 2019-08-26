@@ -24,6 +24,10 @@ struct position {
     bool operator==(const position& a) const {
         return (x == a.x && y == a.y);
     }
+
+    bool operator!=(const position& a) const {
+        return !((*this) == a);
+    }
 };
 
 class NCurses {
