@@ -4,6 +4,8 @@
 #include <array>
 #include <string>
 #include <sstream>
+#include <chrono>
+#include <thread>
 #include "Playground.h"
 #include "Tetroid.h"
 #include "NCurses.h"
@@ -120,6 +122,7 @@ int main()
         }
         refresh();
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     endwin();
     return(0);
 }
