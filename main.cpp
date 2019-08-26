@@ -66,8 +66,18 @@ int main()
         switch (cmd) {
             case 'A': // up
                 tetroid.rotate();
-                if (pg.collision(currentPos, tetroid) != Collision::None) {
-                    tetroid.unrotate();
+                switch (pg.collision(currentPos, tetroid)) {
+                    case Collision::BorderLeft:
+                        currentPos.x++;
+                        break;
+                    case Collision::BorderRight:
+                        currentPos.x--;
+                        break;
+                    case Collision::PieceOrGround:
+                        tetroid.unrotate();
+                        break;
+                    case Collision::None:
+                        break;
                 }
                 break;
             case 'B': // down
