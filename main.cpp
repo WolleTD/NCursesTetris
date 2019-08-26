@@ -84,6 +84,9 @@ int main()
                     it = (it + 1) % 7;
                     tetroid = Tetroid(tetroid_strings[it].c_str());
                     currentPos = { pg_width / 2 - 2, 0 };
+                    if (pg.collision(currentPos, tetroid) == Collision::PieceOrGround) {
+                        gameOver = true;
+                    }
                 } else {
                     currentPos.y++;
                 }
