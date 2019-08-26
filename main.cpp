@@ -40,19 +40,17 @@ int main()
         mvaddch(y_border, pg_pos.x + pg_width, '#');
     }
     mvaddstr(pg_pos.y + pg_height, pg_pos.x, std::string(pg_width, '#').c_str());
-    refresh();
 
     bool gameOver = false;
     size_t it = 0;
     Tetroid tetroid(tetroid_strings[it].c_str());
     position currentPos = {pg_width / 2 - 2, 0 };
 
-    while(!gameOver) {
-        // Update display
-        tetroid.print(pg_pos + currentPos);
-        pg.print(pg_pos);
-        refresh();
+    tetroid.print(pg_pos + currentPos);
+    pg.print(pg_pos);
+    refresh();
 
+    while(!gameOver) {
         // User input
         int cmd = getch();
 
@@ -106,13 +104,18 @@ int main()
             default:
                 break;
         }
-        if (it > 6) {
+
+        // Update display
+        tetroid.print(pg_pos + currentPos);
+        pg.print(pg_pos);
+
+        if (gameOver) {
             mvaddstr(LINES / 2, COLS / 2 - 5, "GAME OVER!");
             NCurses::drawBox({COLS / 2 - 7, LINES / 2 - 1},
-                    {COLS / 2 + 6, LINES / 2 + 1},
-                    '#');
-            gameOver = true;
+                             {COLS / 2 + 6, LINES / 2 + 1},
+                             '#');
         }
+        refresh();
     }
     endwin();
     return(0);
