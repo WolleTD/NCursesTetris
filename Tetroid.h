@@ -27,6 +27,8 @@ public:
     void print(position pos) const;
     void clear(position pos) const;
 
+    size_t Rotation() const { return rotation; }
+
     char operator()(size_t x, size_t y) const;
 
     char operator[](size_t idx) const {

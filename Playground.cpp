@@ -2,6 +2,7 @@
 // Created by wolle on 25.08.19.
 //
 
+#include <algorithm>
 #include <curses.h>
 #include "NCurses.h"
 #include "Playground.h"
@@ -33,28 +34,69 @@ char Playground::operator()(size_t y, size_t x) const {
         return 0;
 }
 
-bool Playground::addTetroid(const position &pos, const Tetroid &tetroid) {
-    if (collision(pos, tetroid) != Collision::None) {
-        return false;
-    } else {
-        for (size_t x = 0; x < 4; x++) {
-            for (size_t y = 0; y < 4; y++) {
-                if (tetroid(x, y) != ' ') {
-                    data[width * (pos.y + y) + pos.x + x] = tetroid(x, y);
-                }
+size_t Playground::addTetroid(const position &pos, const Tetroid &tetroid) {
+    for (size_t x = 0; x < 4; x++) {
+        for (size_t y = 0; y < 4; y++) {
+            if (tetroid(x, y) != ' ') {
+                data[width * (pos.y + y) + pos.x + x] = tetroid(x, y);
             }
         }
-        return true;
     }
+    size_t points = 0;
+    for (size_t row = pos.y; row < std::min((size_t)pos.y + 4, height); row++) {
+        if (lineFilled(row)) {
+            points += 100;
+            markLine(row);
+            markedLines.push_back(row);
+        }
+    }
+    return points;
 }
 
 void Playground::print(const position &pos) const {
     for (size_t row = 0; row < height; row++) {
         for (size_t col = 0; col < width; col++) {
-            if ((*this)(row, col) != ' ') {
+            //if ((*this)(row, col) != ' ') {
                 mvaddch(pos.y + row, pos.x + col, (*this)(row, col));
-            }
+            //}
         }
-        //mvaddnstr(pos.y + row, pos.x, (*this)[row].c_str(), width);
     }
+}
+
+bool Playground::lineFilled(size_t idx) const {
+    auto lineBegin = data.begin() + idx * width;
+    auto lineEnd = lineBegin + width;
+    return std::find(lineBegin, lineEnd, ' ') == lineEnd;
+}
+
+void Playground::markLine(size_t idx) {
+    auto lineBegin = data.begin() + idx * width;
+    auto lineEnd = lineBegin + width;
+    bool markBlank = (markToggles % 2 == 1);
+    std::fill(lineBegin, lineEnd, (markBlank ? ' ' : '='));
+}
+
+void Playground::eraseLine(size_t idx) {
+    auto lineBegin = data.begin() + idx * width;
+    auto lineEnd = lineBegin + width;
+    std::copy_backward(data.begin(), lineBegin, lineEnd);
+    std::fill(data.begin(), data.begin() + width, ' ');
+}
+
+bool Playground::updateMarkedLines() {
+    if (markedLines.empty())
+        return false;
+    // Flash two times, erase on toggles == 5
+    if (++markToggles == 6) {
+        for (auto line: markedLines) {
+            eraseLine(line);
+        }
+        markToggles = 0;
+        markedLines.clear();
+    } else {
+        for (auto line: markedLines) {
+            markLine(line);
+        }
+    }
+    return true;
 }

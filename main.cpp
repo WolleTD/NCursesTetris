@@ -6,6 +6,7 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#include <random>
 #include "Playground.h"
 #include "Tetroid.h"
 #include "NCurses.h"
@@ -19,52 +20,70 @@ static const std::array<std::string,7> tetroid_strings = {
         {"  F  FF   F     "},
         {"  G   G   G   G "}}};
 
-int main()
-{
-    setlocale(LC_ALL, "");
 
-    initscr();
-    cbreak();
-    noecho();
-    curs_set(0);
-
-    mvprintw(2, 5, "LINES: %d", LINES);
-    mvprintw(2, 15, "COLS:  %d", COLS);
-
+int main() {
+    // Playground configuration
     const size_t pg_width = 10;
     const size_t pg_height = 20;
     const position pg_pos = {5, 3 };
 
-    Playground pg(pg_width, pg_height);
+    // Initialize curses
+    setlocale(LC_ALL, "");
 
+    WINDOW* curswin = initscr();
+    cbreak();
+    noecho();
+    curs_set(0);
+    nodelay(curswin, true);
+
+    // Debug output
+    mvprintw(2, 5, "LINES: %d", LINES);
+    mvprintw(2, 15, "COLS:  %d", COLS);
+
+    // Draw playground border (TODO: Replace with drawBox)
     for (size_t y_border = pg_pos.y; y_border <= pg_pos.y + pg_height; y_border++) {
         mvaddch(y_border, pg_pos.x - 1, '#');
         mvaddch(y_border, pg_pos.x + pg_width, '#');
     }
     mvaddstr(pg_pos.y + pg_height, pg_pos.x, std::string(pg_width, '#').c_str());
 
+    // RNG setup
+    std::random_device r;
+    std::mt19937 rng(r());
+    std::uniform_int_distribution<size_t> randTet(0, 6);
+
+    // Setup game variables
     bool gameOver = false;
-    size_t it = 0;
-    Tetroid tetroid(tetroid_strings[it].c_str());
+    size_t points = 0;
+    size_t frameCounter = 0;
+    size_t nextTetroidId = randTet(rng);
+
+    Playground pg(pg_width, pg_height);
+    Tetroid tetroid(tetroid_strings[nextTetroidId].c_str());
     position currentPos = {pg_width / 2 - 2, 0 };
 
-    tetroid.print(pg_pos + currentPos);
+    // Initial print
     pg.print(pg_pos);
+    tetroid.print(pg_pos + currentPos);
     refresh();
 
+    // Main loop
     while(!gameOver) {
-        // User input
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        position backupPos = currentPos;
+        bool rotated = false;
+        bool updatedMarks = false;
+        bool needsNewTetroid = false;
+        if (frameCounter % 4 == 0) {
+            updatedMarks = pg.updateMarkedLines();
+        }
+
+        // Read and handle user input
         int cmd = getch();
 
-        // Debug output char
-        std::stringstream ss;
-        ss << cmd;
-        mvaddstr(20, 25, ss.str().c_str());
-        tetroid.clear(pg_pos + currentPos);
-
-        // Handle user input
         switch (cmd) {
             case 'A': // up
+                rotated = true;
                 tetroid.rotate();
                 switch (pg.collision(currentPos, tetroid)) {
                     case Collision::BorderLeft:
@@ -82,13 +101,7 @@ int main()
                 break;
             case 'B': // down
                 if (pg.collision(currentPos + position(0, 1), tetroid) != Collision::None) {
-                    pg.addTetroid(currentPos, tetroid);
-                    it = (it + 1) % 7;
-                    tetroid = Tetroid(tetroid_strings[it].c_str());
-                    currentPos = { pg_width / 2 - 2, 0 };
-                    if (pg.collision(currentPos, tetroid) == Collision::PieceOrGround) {
-                        gameOver = true;
-                    }
+                    needsNewTetroid = true;
                 } else {
                     currentPos.y++;
                 }
@@ -110,10 +123,33 @@ int main()
                 break;
         }
 
-        // Update display
-        tetroid.print(pg_pos + currentPos);
-        pg.print(pg_pos);
+        if (frameCounter % 20 == 0) {
+            if (pg.collision(currentPos + position(0, 1), tetroid) != Collision::None) {
+                needsNewTetroid = true;
+            } else {
+                currentPos.y++;
+            }
+        }
 
+        if (needsNewTetroid) {
+            points += pg.addTetroid(currentPos, tetroid);
+
+            nextTetroidId = randTet(rng);
+            tetroid = Tetroid(tetroid_strings[nextTetroidId].c_str());
+            currentPos = { pg_width / 2 - 2, 0 };
+            if (pg.collision(currentPos, tetroid) == Collision::PieceOrGround) {
+                gameOver = true;
+            }
+        }
+
+        // Update display
+        if ((backupPos != currentPos) || rotated || updatedMarks) {
+            pg.print(pg_pos);
+            tetroid.print(pg_pos + currentPos);
+            std::stringstream ss;
+            ss << "Punkte: " << points;
+            mvaddstr(pg_pos.y + 2, pg_pos.x + pg_width + 2, ss.str().c_str());
+        }
         if (gameOver) {
             mvaddstr(LINES / 2, COLS / 2 - 5, "GAME OVER!");
             NCurses::drawBox({COLS / 2 - 7, LINES / 2 - 1},
@@ -121,6 +157,7 @@ int main()
                              '#');
         }
         refresh();
+        frameCounter++;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     endwin();

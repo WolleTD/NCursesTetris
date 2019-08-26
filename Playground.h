@@ -23,12 +23,19 @@ class Playground {
     friend class PlaygroundRow;
 
     std::vector<char> data;
+    std::vector<size_t> markedLines;
+    size_t markToggles;
     size_t width;
     size_t height;
 
+    bool lineFilled(size_t idx) const;
+    void markLine(size_t idx);
+    void eraseLine(size_t idx);
+
 public:
     Playground(size_t width, size_t height)
-            : data(std::vector<char>(width * height, ' ')), width(width), height(height) { }
+            : data(std::vector<char>(width * height, ' ')),
+              markedLines(), markToggles(false), width(width), height(height) { }
 
     size_t Width() const { return width; }
     size_t Height() const { return height; }
@@ -37,7 +44,8 @@ public:
 
     Collision collision(const position& pos, const Tetroid& tetroid) const;
 
-    bool addTetroid(const position& pos, const Tetroid& tetroid);
+    size_t addTetroid(const position& pos, const Tetroid& tetroid);
+    bool updateMarkedLines();
 
     char operator()(size_t y, size_t x) const;
 };
