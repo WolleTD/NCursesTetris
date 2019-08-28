@@ -3,9 +3,9 @@
 //
 
 #include "NCurses.h"
-#include <cstddef>
-#include <algorithm>
 #include <curses.h>
+#include <algorithm>
+#include <cstddef>
 #include <string>
 
 void NCurses::drawBox(position pos1, position pos2, char symbol) {

@@ -19,7 +19,6 @@ enum class Collision {
 };
 
 class Playground {
-
     friend class PlaygroundRow;
 
     std::vector<char> data;
@@ -35,7 +34,10 @@ class Playground {
 public:
     Playground(size_t width, size_t height)
             : data(std::vector<char>(width * height, ' ')),
-              markedLines(), markToggles(false), width(width), height(height) { }
+              markedLines(),
+              markToggles(false),
+              width(width),
+              height(height) {}
 
     size_t Width() const { return width; }
     size_t Height() const { return height; }
@@ -50,5 +52,4 @@ public:
     char operator()(size_t y, size_t x) const;
 };
 
-
-#endif //NCURSESTETRIS_PLAYGROUND_H
+#endif  // NCURSESTETRIS_PLAYGROUND_H

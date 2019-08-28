@@ -5,16 +5,16 @@
 #ifndef NCURSESTETRIS_TETROID_H
 #define NCURSESTETRIS_TETROID_H
 
-#include <cstddef>
 #include <array>
+#include <cstddef>
 
 struct position;
 
 class Tetroid {
-    std::array<char,17> data;
+    std::array<char, 17> data;
     size_t rotation;
 
-    template<int W, int H>
+    template <int W, int H>
     size_t mkindex(size_t x, size_t y) const;
     void print_impl(size_t y, size_t x, bool clear) const;
 
@@ -31,9 +31,7 @@ public:
 
     char operator()(size_t x, size_t y) const;
 
-    char operator[](size_t idx) const {
-        return (*this)(idx % 4, idx / 4);
-    }
+    char operator[](size_t idx) const { return (*this)(idx % 4, idx / 4); }
 };
 
-#endif //NCURSESTETRIS_TETROID_H
+#endif  // NCURSESTETRIS_TETROID_H

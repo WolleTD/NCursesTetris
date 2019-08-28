@@ -1,32 +1,30 @@
 #include <curses.h>
+#include <array>
+#include <chrono>
 #include <clocale>
 #include <cstddef>
-#include <array>
-#include <string>
 #include <iostream>
-#include <sstream>
-#include <chrono>
-#include <thread>
 #include <random>
+#include <sstream>
+#include <string>
+#include <thread>
+#include "NCurses.h"
 #include "Playground.h"
 #include "Tetroid.h"
-#include "NCurses.h"
 
-static const std::array<std::string,7> tetroid_strings = {
-        {{" A   AA   A     "},
-        {"  B  BB  B      "},
-        {"  C   C  CC     "},
-        {" D   D   DD     "},
-        {"     EE  EE     "},
-        {"  F  FF   F     "},
-        {"  G   G   G   G "}}};
-
+static const std::array<std::string, 7> tetroid_strings = {{{" A   AA   A     "},
+                                                            {"  B  BB  B      "},
+                                                            {"  C   C  CC     "},
+                                                            {" D   D   DD     "},
+                                                            {"     EE  EE     "},
+                                                            {"  F  FF   F     "},
+                                                            {"  G   G   G   G "}}};
 
 int main() {
     // Playground configuration
     const size_t pg_width = 10;
     const size_t pg_height = 20;
-    const position pg_pos = {5, 3 };
+    const position pg_pos = {5, 3};
 
     // Initialize curses
     setlocale(LC_ALL, "");
@@ -63,7 +61,7 @@ int main() {
 
     Playground pg(pg_width, pg_height);
     Tetroid tetroid(tetroid_strings[nextTetroidId].c_str());
-    position currentPos = {pg_width / 2 - 2, 0 };
+    position currentPos = {pg_width / 2 - 2, 0};
 
     // Initial print
     pg.print(pg_pos);
@@ -71,7 +69,7 @@ int main() {
     refresh();
 
     // Main loop
-    while(!gameOver) {
+    while (!gameOver) {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
         position backupPos = currentPos;
         bool rotated = false;
@@ -85,7 +83,7 @@ int main() {
         int cmd = getch();
 
         switch (cmd) {
-            case 'A': // up
+            case 'A':  // up
                 rotated = true;
                 tetroid.rotate();
                 switch (pg.collision(currentPos, tetroid)) {
@@ -102,19 +100,19 @@ int main() {
                         break;
                 }
                 break;
-            case 'B': // down
+            case 'B':  // down
                 if (pg.collision(currentPos + position(0, 1), tetroid) != Collision::None) {
                     needsNewTetroid = true;
                 } else {
                     currentPos.y++;
                 }
                 break;
-            case 'C': // right
+            case 'C':  // right
                 if (pg.collision(currentPos + position(1, 0), tetroid) == Collision::None) {
                     currentPos.x++;
                 }
                 break;
-            case 'D': // left
+            case 'D':  // left
                 if (pg.collision(currentPos - position(1, 0), tetroid) == Collision::None) {
                     currentPos.x--;
                 }
@@ -145,7 +143,7 @@ int main() {
 
             nextTetroidId = randTet(rng);
             tetroid = Tetroid(tetroid_strings[nextTetroidId].c_str());
-            currentPos = { pg_width / 2 - 2, 0 };
+            currentPos = {pg_width / 2 - 2, 0};
             if (pg.collision(currentPos, tetroid) == Collision::PieceOrGround) {
                 gameOver = true;
             }
@@ -164,9 +162,7 @@ int main() {
         }
         if (gameOver) {
             mvaddstr(LINES / 2, COLS / 2 - 5, "GAME OVER!");
-            NCurses::drawBox({COLS / 2 - 7, LINES / 2 - 1},
-                             {COLS / 2 + 6, LINES / 2 + 1},
-                             '#');
+            NCurses::drawBox({COLS / 2 - 7, LINES / 2 - 1}, {COLS / 2 + 6, LINES / 2 + 1}, '#');
         }
         refresh();
         frameCounter++;
@@ -174,5 +170,5 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     endwin();
     std::cout << "Final level: " << (21 - speed) << std::endl << "Final score: " << score << std::endl;
-    return(0);
+    return 0;
 }

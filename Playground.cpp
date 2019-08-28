@@ -2,14 +2,13 @@
 // Created by wolle on 25.08.19.
 //
 
-#include <algorithm>
-#include <curses.h>
-#include "NCurses.h"
 #include "Playground.h"
+#include <curses.h>
+#include <algorithm>
+#include "NCurses.h"
 #include "Tetroid.h"
 
-
-Collision Playground::collision(const position& pos, const Tetroid& tetroid) const {
+Collision Playground::collision(const position &pos, const Tetroid &tetroid) const {
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
             if ((tetroid(x, y) != ' ')) {
@@ -17,8 +16,7 @@ Collision Playground::collision(const position& pos, const Tetroid& tetroid) con
                     return Collision::BorderLeft;
                 } else if (pos.x + x >= this->width) {
                     return Collision::BorderRight;
-                } else if ((pos.y + y >= this->height) ||
-                    (data[width * (pos.y + y) + pos.x + x] != ' ')) {
+                } else if ((pos.y + y >= this->height) || (data[width * (pos.y + y) + pos.x + x] != ' ')) {
                     return Collision::PieceOrGround;
                 }
             }
@@ -82,17 +80,16 @@ void Playground::eraseLine(size_t idx) {
 }
 
 bool Playground::updateMarkedLines() {
-    if (markedLines.empty())
-        return false;
+    if (markedLines.empty()) return false;
     // Flash two times, erase on toggles == 5
     if (++markToggles == 6) {
-        for (auto line: markedLines) {
+        for (auto line : markedLines) {
             eraseLine(line);
         }
         markToggles = 0;
         markedLines.clear();
     } else {
-        for (auto line: markedLines) {
+        for (auto line : markedLines) {
             markLine(line);
         }
     }
