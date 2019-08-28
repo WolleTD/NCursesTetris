@@ -25,8 +25,9 @@ Tetroid::Tetroid(const char symbol[17]) : data{}, rotation(0) {
 void Tetroid::print_impl(size_t y, size_t x, bool clear) const {
     for (size_t i = 0; i < 4; i++) {
         for (size_t j = 0; j < 4; j++) {
-            if ((*this)(j, i) != ' ')
+            if ((*this)(j, i) != ' ') {
                 mvaddch(y + i, x + j, (clear ? ' ' : (*this)(j, i)));
+            }
         }
     }
 }
@@ -40,8 +41,5 @@ void Tetroid::clear(position pos) const {
 }
 
 char Tetroid::operator()(size_t x, size_t y) const {
-//        size_t shift_y = (rotation % 4 == 2) ? 1 : 0;
-//        size_t shift_x = (rotation % 4 == 3) ? 1 : 0;
-//        return data[mkindex<4,4>((x - shift_x) % 4, (y + shift_y) % 4, rotation)];
     return data[this->mkindex<4,4>(x % 4, y % 4)];
 }
