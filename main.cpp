@@ -156,6 +156,9 @@ int main() {
             pg.print(pg_pos);
             tetroid.print(pg_pos + currentPos);
             std::stringstream ss;
+            ss << "Level: " << (21 - speed);
+            mvaddstr(pg_pos.y + 1, pg_pos.x + pg_width + 2, ss.str().c_str());
+            ss.str(std::string());
             ss << "Score: " << score;
             mvaddstr(pg_pos.y + 2, pg_pos.x + pg_width + 2, ss.str().c_str());
         }
@@ -170,6 +173,6 @@ int main() {
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     endwin();
-    std::cout << "Final score: " << score << std::endl;
+    std::cout << "Final level: " << (21 - speed) << std::endl << "Final score: " << score << std::endl;
     return(0);
 }
