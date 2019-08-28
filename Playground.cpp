@@ -42,15 +42,15 @@ size_t Playground::addTetroid(const position &pos, const Tetroid &tetroid) {
             }
         }
     }
-    size_t points = 0;
+    size_t rows = 0;
     for (size_t row = pos.y; row < std::min((size_t)pos.y + 4, height); row++) {
         if (lineFilled(row)) {
-            points += 100;
+            rows++;
             markLine(row);
             markedLines.push_back(row);
         }
     }
-    return points;
+    return rows;
 }
 
 void Playground::print(const position &pos) const {

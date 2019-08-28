@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <array>
 #include <string>
+#include <iostream>
 #include <sstream>
 #include <chrono>
 #include <thread>
@@ -54,8 +55,10 @@ int main() {
 
     // Setup game variables
     bool gameOver = false;
-    size_t points = 0;
+    size_t score = 0;
+    size_t clearedRows = 0;
     size_t frameCounter = 0;
+    size_t speed = 20;
     size_t nextTetroidId = randTet(rng);
 
     Playground pg(pg_width, pg_height);
@@ -123,7 +126,7 @@ int main() {
                 break;
         }
 
-        if (frameCounter % 20 == 0) {
+        if (frameCounter % speed == 0) {
             if (pg.collision(currentPos + position(0, 1), tetroid) != Collision::None) {
                 needsNewTetroid = true;
             } else {
@@ -132,7 +135,13 @@ int main() {
         }
 
         if (needsNewTetroid) {
-            points += pg.addTetroid(currentPos, tetroid);
+            size_t rows = pg.addTetroid(currentPos, tetroid);
+            score += 50 * rows * (1u << rows);
+            clearedRows += rows;
+            if ((clearedRows >= 5) && (speed > 1)) {
+                clearedRows = 0;
+                speed--;
+            }
 
             nextTetroidId = randTet(rng);
             tetroid = Tetroid(tetroid_strings[nextTetroidId].c_str());
@@ -147,7 +156,7 @@ int main() {
             pg.print(pg_pos);
             tetroid.print(pg_pos + currentPos);
             std::stringstream ss;
-            ss << "Punkte: " << points;
+            ss << "Score: " << score;
             mvaddstr(pg_pos.y + 2, pg_pos.x + pg_width + 2, ss.str().c_str());
         }
         if (gameOver) {
@@ -161,5 +170,6 @@ int main() {
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     endwin();
+    std::cout << "Final score: " << score << std::endl;
     return(0);
 }
